@@ -75,8 +75,8 @@ function prepare_mozconfig() {
   local config
   if [[ -r $_TOPDIR/config/mozconfig.$CONFIG ]]; then
     config=$_TOPDIR/config/mozconfig.$CONFIG
-  elif [[ -r $_GECKO_SRC_DIR/embedding/embedlite/config/mozconfig.$CONFIG ]]; then
-    config=$_GECKO_SRC_DIR/embedding/embedlite/config/mozconfig.$CONFIG
+  elif [[ -r $GECKO_SRC_DIR/embedding/embedlite/config/mozconfig.$CONFIG ]]; then
+    config=$GECKO_SRC_DIR/embedding/embedlite/config/mozconfig.$CONFIG
   else
     printf "Could not file mozconfig.$CONFIG\n"
     exit 1
