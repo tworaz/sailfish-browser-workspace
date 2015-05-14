@@ -1,0 +1,9 @@
+# Build Firefox for Android:
+ac_add_options --enable-application=mobile/android
+ac_add_options --target=arm-linux-androideabi
+
+# With the following Android SDK and NDK:
+ac_add_options --with-android-sdk="/opt/android-sdk-update-manager/platforms/android-18"
+ac_add_options --with-android-ndk="/opt/android-ndk"
+
+mk_add_options MOZ_OBJDIR=./objdir-droid
