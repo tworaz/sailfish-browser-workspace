@@ -107,7 +107,7 @@ function build_gecko() {
   # Configure
   if [[ $BUILD_MODE == "Debug" ]]; then
     add_mozilla_configure_opts \
-        --enable-debuggubg \
+        --enable-debug \
         --enable-logging \
         --disable-optimize
   fi
@@ -231,6 +231,7 @@ function build_sailfish_browser() {
       DEFAULT_COMPONENT_PATH=$BUILD_DIR/gecko/dist/bin \
       QTEMBED_LIB+=$BUILD_DIR/qtmozembed/obj/src/$LIBQTEMBEDWIDGET \
       INCLUDEPATH+=$QTMOZEMBED_SRC_DIR/src \
+      CONFIG+=debug \
       $SAILFISH_BROWSER_SRC_DIR
 
 
