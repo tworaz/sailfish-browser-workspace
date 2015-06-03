@@ -78,7 +78,7 @@ function prepare_mozconfig() {
   elif [[ -r $GECKO_SRC_DIR/embedding/embedlite/config/mozconfig.$CONFIG ]]; then
     config=$GECKO_SRC_DIR/embedding/embedlite/config/mozconfig.$CONFIG
   else
-    printf "Could not file mozconfig.$CONFIG\n"
+    printf "Could not find mozconfig.$CONFIG\n"
     exit 1
   fi
 
@@ -99,6 +99,10 @@ function build_gecko() {
       "MOZ_OBJDIR=\"$BUILD_DIR/gecko\"" \
       "MOZ_MAKE_FLAGS=\"-j$MAKE_JOBS\"" \
       "AUTOCLOBBER=1"
+
+  echo "CFLAGS=\"$CFLAGS -fuse-ld=gold\"" >>  $MOZCONFIG
+  echo "CXXFLAGS=\"$CXXFLAGS -fuse-ld=gold\"" >>  $MOZCONFIG
+  echo "LD=ld.gold" >>  $MOZCONFIG
 
   add_mozilla_configure_opts \
       --disable-trace-malloc \
@@ -288,7 +292,9 @@ mkdir -p $BUILD_DIR
 build_embedlite_components
 build_qtmozembed
 build_qmlmozbrowser
+if [[ "$CONFIG" == "qtdesktop-ng" ]]; then
 build_qzilla
+fi
 if [[ "$CONFIG" == "merqtxulrunner" ]]; then
   build_sailfish_browser
 fi
