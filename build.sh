@@ -31,6 +31,7 @@ Options:
   -j [number]                   Specify number make build jobs to use (default: $MAKE_JOBS)
   -k, --ccache                  Enable support for ccache
   -l, --list-configs            List available configurations
+  -x, --no-gold                 Don't use gold linker.
   -v, --verbose                 Build the code in verbose mode
 EOF
 exit 0
@@ -100,9 +101,11 @@ function build_gecko() {
       "MOZ_MAKE_FLAGS=\"-j$MAKE_JOBS\"" \
       "AUTOCLOBBER=1"
 
-  echo "CFLAGS=\"$CFLAGS -fuse-ld=gold\"" >>  $MOZCONFIG
-  echo "CXXFLAGS=\"$CXXFLAGS -fuse-ld=gold\"" >>  $MOZCONFIG
-  echo "LD=ld.gold" >>  $MOZCONFIG
+  if [[ $USE_GOLD == true ]]; then
+    echo "CFLAGS=\"$CFLAGS -fuse-ld=gold\"" >>  $MOZCONFIG
+    echo "CXXFLAGS=\"$CXXFLAGS -fuse-ld=gold\"" >>  $MOZCONFIG
+    echo "LD=ld.gold" >>  $MOZCONFIG
+  fi
 
   add_mozilla_configure_opts \
       --disable-trace-malloc \
@@ -249,6 +252,7 @@ BUILD_MODE="Release"
 BUILD_GECKO=true
 FORCE_CONFIGURE=false
 USE_CCACHE=false
+USE_GOLD=true
 VERBOSE=false
 
 while [[ $# > 0 ]]; do
@@ -277,6 +281,9 @@ while [[ $# > 0 ]]; do
       ;;
     -l|--list-configs)
       list_configs
+      ;;
+    -x|--no-gold)
+      USE_GOLD=false
       ;;
     -v|--verbose)
       VERBOSE=true
