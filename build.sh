@@ -210,11 +210,7 @@ function build_qzilla() {
   mkdir -p $BUILD_DIR/qzilla
   pushd $BUILD_DIR/qzilla > /dev/null
 
-  if [[ "$CONFIG" == "merqtxulrunner" ]]; then
-    SF_TARGET=1
-  fi
   qmake \
-      SF_TARGET=$SF_TARGET \
       INCLUDEPATH+=$QTMOZEMBED_SRC_DIR/src \
       LIBS+=$BUILD_DIR/qtmozembed/obj/src/$LIBQTEMBEDWIDGET \
       CONFIG+=debug \
