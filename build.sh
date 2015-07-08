@@ -25,6 +25,7 @@ usage: $1 [options]
 Options:
   -c, --config [configuration]  Build gecko for specified configuration
   -d, --debug                   Compile the code in debug mode
+      --dmd                     Enable DMD (dark matter detector)
   -f, --force-configure         Force the script to re-run gecko confguration step
   -g, --skip-gecko              Skip gecko build step
   -h, --help                    Show this help message
@@ -32,6 +33,7 @@ Options:
   -k, --ccache                  Enable support for ccache
   -l, --list-configs            List available configurations
   -x, --no-gold                 Don't use gold linker.
+      --valgrind                Enable support for running gecko under valgrind.
   -v, --verbose                 Build the code in verbose mode
 EOF
 exit 0
@@ -117,6 +119,14 @@ function build_gecko() {
         --enable-debug \
         --enable-logging \
         --disable-optimize
+    if [[ $ENABLE_DMD == true ]]; then
+      add_mozilla_configure_opts --enable-dmd
+    fi
+  fi
+  if [[ $USE_VALGRIND == true ]]; then
+    add_mozilla_configure_opts \
+        --disable-jemalloc \
+        --enable-valgrind
   fi
 
   if [[ $USE_CCACHE == true ]]; then
@@ -250,6 +260,8 @@ FORCE_CONFIGURE=false
 USE_CCACHE=false
 USE_GOLD=true
 VERBOSE=false
+ENABLE_DMD=false
+USE_VALGRIND=false
 
 while [[ $# > 0 ]]; do
   case $1 in
@@ -259,6 +271,9 @@ while [[ $# > 0 ]]; do
       ;;
     -d|--debug)
       BUILD_MODE="Debug"
+      ;;
+    --dmd)
+      ENABLE_DMD=true
       ;;
     -f|--force-configure)
       FORCE_CONFIGURE=true
@@ -281,12 +296,20 @@ while [[ $# > 0 ]]; do
     -x|--no-gold)
       USE_GOLD=false
       ;;
+    --valgrind)
+      USE_VALGRIND=true
+      ;;
     -v|--verbose)
       VERBOSE=true
       ;;
   esac
   shift
 done
+
+if [[ $ENABLE_DMD == true && $BUILD_MODE == "Release" ]]; then
+  echo "Error: DMD mode has no effect in release builds!";
+  exit 1
+fi
 
 BUILD_DIR=${_TOPDIR}/out.$BUILD_MODE.$(uname -m).$CONFIG
 mkdir -p $BUILD_DIR
